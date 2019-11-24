@@ -1,0 +1,171 @@
+Sub AnalyzeStockMarket()
+
+' Loop through all sheets
+For Each ws In Worksheets
+
+' Add the word Ticker to the I Column Header
+ws.Cells(1, 9).Value = "Ticker"
+ws.Cells(1, 16).Value = "Ticker"
+
+' Add the word Yearly Change to the J Column Header
+ws.Cells(1, 10).Value = "Yearly Change"
+
+' Add the word Percent Change to the K Column Header
+ws.Cells(1, 11).Value = "Percent Change"
+
+' Add the word Total Stock Volumn to the L Column Header
+ws.Cells(1, 12).Value = "Total Stock Volumn"
+
+' Add the word Value to the Q Column Header
+ws.Cells(1, 17).Value = "Value"
+
+' Add the word "Greatest % increase", "Greatest % Decrease" and "Greatest total volume" to the O Column Header
+ws.Cells(2, 15).Value = "Greatest % increase"
+ws.Cells(3, 15).Value = "Greatest % decrease"
+ws.Cells(4, 15).Value = "Greatest total volume"
+
+' Created a Variable
+Dim lastrow As Long
+
+'Determine the last row
+lastrow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+
+
+Dim Summary_Table_Row As Integer
+    Summary_Table_Row = 2
+  
+Dim Year_Open As Double
+Dim Year_Close As Double
+Dim Last_Row As Double
+Dim Last_Ticker As Double
+Dim Yearly_Change As Double
+Dim Percent_Change As Double
+Dim Total_Vol As Double
+
+
+Dim Current_Highest_Inc As Double
+Dim Current_Highest_Dec As Double
+Dim Current_Highest_Vol As Double
+
+
+Dim Ticker_Current_Highest_Inc As String
+Dim Ticker_Current_Highest_Dec As String
+Dim Ticker_Current_Highest_Vol As String
+
+
+Current_Highest_Inc = 0
+Current_Highest_Dec = 0
+Current_Highest_Vol = 0
+
+Ticker_Current_Highest_Inc = ""
+Ticker_Current_Highest_Dec = ""
+Ticker_Current_Highest_Vol = ""
+
+
+Total_Vol = 0
+Year_Open = ws.Cells(2, 3).Value
+
+For i = 2 To lastrow
+
+    'Add to the Ticker Volumn Total
+    Total_Vol = Total_Vol + ws.Cells(i, 7).Value
+
+    ' Check if we are still within the same Ticker, if it is not...
+    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        
+        'Set the Ticker Name
+        Ticker_Name = ws.Cells(i, 1).Value
+    
+        
+        ' Set Year Close value
+        Year_Close = ws.Cells(i, 6).Value
+            
+        ' Calculate the Yearly Change from Open to Close
+        Yearly_Change = Year_Close - Year_Open
+        
+        
+        ' Color cell based on positive or negative change
+        If Yearly_Change >= 0 Then
+            ws.Cells(Summary_Table_Row, 10).Interior.ColorIndex = 4
+                        
+        ElseIf Yearly_Change < 0 Then
+            ws.Cells(Summary_Table_Row, 10).Interior.ColorIndex = 3
+                        
+        End If
+        
+        ' Calculate Percent Change from the Yearly Open
+        If Year_Open = 0 Then
+            Percent_Change = Yearly_Change
+            
+        Else
+            Percent_Change = Yearly_Change / Year_Open
+            
+        End If
+                    
+        ' Add the current ticker data to the summary table
+        ws.Range("I" & Summary_Table_Row).Value = Ticker_Name
+        ws.Range("J" & Summary_Table_Row).Value = Yearly_Change
+        ws.Range("K" & Summary_Table_Row).Value = Percent_Change
+        ws.Range("K" & Summary_Table_Row).NumberFormat = "0.00%"
+        ws.Range("L" & Summary_Table_Row).Value = Total_Vol
+            
+        ' Add one to the summary table row
+        Summary_Table_Row = Summary_Table_Row + 1
+              
+        'Reset the Ticker_Vol
+        Total_Vol = 0
+              
+        ' Reset the Year_Open value to the next ticker
+        Year_Open = ws.Cells(i + 1, 3).Value
+              
+    End If
+       
+ Next i
+ 
+' Created a Variable
+Dim Klastrow As Long
+
+'Determine the last row
+Klastrow = ws.Cells(Rows.Count, "K").End(xlUp).Row
+
+For k = 2 To Klastrow
+    
+    If ws.Cells(k, 11).Value > Current_Highest_Inc Then
+        Current_Highest_Inc = ws.Cells(k, 11).Value
+        Ticker_Current_Highest_Inc = ws.Cells(k, 9).Value
+    End If
+
+    
+    If ws.Cells(k, 11).Value < Current_Highest_Dec Then
+        Current_Highest_Dec = ws.Cells(k, 11).Value
+        Ticker_Current_Highest_Dec = ws.Cells(k, 9).Value
+    End If
+
+    
+    If ws.Cells(k, 12).Value > Current_Highest_Vol Then
+        Current_Highest_Vol = ws.Cells(k, 12).Value
+        Ticker_Current_Highest_Vol = ws.Cells(k, 9).Value
+    End If
+
+Next k
+
+ws.Cells(2, 17).Value = Current_Highest_Inc
+ws.Cells(2, 17).NumberFormat = "0.00%"
+
+ws.Cells(2, 16).Value = Ticker_Current_Highest_Inc
+
+ws.Cells(3, 17).Value = Current_Highest_Dec
+ws.Cells(3, 17).NumberFormat = "0.00%"
+
+ws.Cells(3, 16).Value = Ticker_Current_Highest_Dec
+
+ws.Cells(4, 17).Value = Current_Highest_Vol
+
+ws.Cells(4, 16).Value = Ticker_Current_Highest_Vol
+
+ Next ws
+ 
+End Sub
+
+
+
