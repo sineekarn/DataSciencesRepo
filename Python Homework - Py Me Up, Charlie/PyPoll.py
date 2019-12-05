@@ -39,7 +39,7 @@ with open(csvpath, newline='') as csvfile:
             canidate[name] = 1
 
     out = out + "\n" + (f"Total Votes: {count}")
-    out = out + "\n" + (f"----------------------")
+    out = out + "\n" + ("----------------------")
 
     #Calculate the percentage of votes each candidate won
     #Calculate the total number of votes each candidate won
@@ -53,9 +53,9 @@ with open(csvpath, newline='') as csvfile:
             winner_cnt = canidate[key]
             winner = key
 
-out = out + "\n" + (f"----------------------")
+out = out + "\n" + ("----------------------")
 out += "\n" + (f"Winner: {winner}")
-out = out + "\n" + (f"----------------------") 
+out = out + "\n" + ("----------------------") 
 
 # Print the script 
 print(out)
